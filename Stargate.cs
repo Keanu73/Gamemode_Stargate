@@ -867,7 +867,7 @@ function StaticShape::StargateWormhole(%this, %dest, %last)
 									%passenger = %obj.getMountedObject(%i);
 									if(isObject(%cl = %passenger.client))
 									{
-										$Stargate[%cl.bl_id] = %obj.linkedGate;
+										$Stargate[%cl.bl_id] = %this.linkedGate;
 										$StargatePos[%cl.bl_id] = %destPos;
 										%destAng = mAtan(getWords(%destFor, 0), getWords(%destFor, 1));
 										$StargateSpawn[%cl.bl_id] = vectorAdd(%destPos, vectorScale(%destFor, 4))@" 0 0 1 "@%destAng;
@@ -885,7 +885,7 @@ function StaticShape::StargateWormhole(%this, %dest, %last)
 							
 							if(isObject(%cl = %obj.client))
 							{
-								$Stargate[%cl.bl_id] = %obj.linkedGate;
+								$Stargate[%cl.bl_id] = %this.linkedGate;
 								$StargatePos[%cl.bl_id] = %destPos;
 								%destAng = mAtan(getWords(%destFor, 0), getWords(%destFor, 1));
 								$StargateSpawn[%cl.bl_id] = vectorAdd(%destPos, vectorScale(%destFor, 4))@" 0 0 1 "@%destAng;
@@ -1288,15 +1288,15 @@ function MakeGates()
 				switch(%addrID)
 				{
 					case 0:
-						%gate.groundTex = "Add-Ons/Ground_Bedroom/TTasphalt01.jpg";
-						%gate.skyTex = "Add-Ons/Sky_Slate_Storm/Slate_Storm.dml";
+						%gate.groundTex = "./TTasphalt01.jpg";
+						%gate.skyTex = "./Slate_Storm.dml";
 						%gate.sunAzim = 0;
 						%gate.sunElev = 90;
 				}
 			}
 		}
-		%earthGate.groundTex = "Add-Ons/Ground_TT/cement-pebbled.jpg";
-		%earthGate.skyTex = "Add-Ons/Sky_Blue2/Blue2.dml";
+		%earthGate.groundTex = "./cement-pebbled.jpg";
+		%earthGate.skyTex = "./Blue2.dml";
 		%earthGate.sunAzim = 0;
 		%earthGate.sunElev = 30;
 		%earthGate.autodialOnShutdown = 1;

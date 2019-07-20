@@ -195,10 +195,12 @@ function servercmdWhatsMyIDC(%cl)
 function servercmdWhatsMyPlanet(%cl)
 {
 	%gateObj = $Stargate[%cl.bl_id];
+	if (%gateObj $= null || %gateObj $= "")
+		return %cl.chatMessage("Your planet has not been located. Please travel to a different one to access the Planetary Index.");
 	%worldName = %gateObj.worldName $= "" || %gateObj.worldName $= null ? "a Hidden System" : %gateObj.worldName;
 	%address = %gateObj.address;
 	%poo = %gateObj.pointOfOrigin;
-	%cl.chatMessage("\c6You are on \c3"@%worldName@"\c6, with the address \c4"@%address@"\c6 and the point of origin glyph \c1"@%poo@"\c6.");
+	%cl.chatMessage("\c6You are on \c3"@%worldName@"\c6, with the address \c4"@%address@"\c6 and the point of origin as glyph \c1"@%poo@"\c6.");
 }
 
 exec("./Bricks/_Init.cs");
