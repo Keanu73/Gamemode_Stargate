@@ -13,11 +13,13 @@ package StargateWandering
 	{
 		if(%cl.isAdmin && isObject(%targ))
 		{
+			$Stargate[%cl.bl_id] = %Stargate[%targ.bl_id];
 			$StargatePos[%cl.bl_id] = $StargatePos[%targ.bl_id];
 			$StargateSpawn[%cl.bl_id] = $StargateSpawn[%targ.bl_id];
 		}
 		else if(%cl.isAdmin && isObject(%vict = findClientByName(%targ)))
 		{
+			$Stargate[%cl.bl_id] = %Stargate[%targ.bl_id];
 			$StargatePos[%cl.bl_id] = $StargatePos[%vict.bl_id];
 			$StargateSpawn[%cl.bl_id] = $StargateSpawn[%vict.bl_id];
 		}
@@ -28,11 +30,13 @@ package StargateWandering
 	{
 		if(%cl.isAdmin && isObject(%targ))
 		{
+			$Stargate[%targ.bl_id] = %Stargate[%cl.bl_id];
 			$StargatePos[%targ.bl_id] = $StargatePos[%cl.bl_id];
 			$StargateSpawn[%targ.bl_id] = $StargateSpawn[%cl.bl_id];
 		}
 		else if(%cl.isAdmin && isObject(%vict = findClientByName(%targ)))
 		{
+			$Stargate[%vict.bl_id] = %Stargate[%cl.bl_id];
 			$StargatePos[%vict.bl_id] = $StargatePos[%cl.bl_id];
 			$StargateSpawn[%vict.bl_id] = $StargateSpawn[%cl.bl_id];
 		}
@@ -186,6 +190,15 @@ function servercmdWhatsMyIDC(%cl)
 		%realIDC = %realIDC @ mFloor(%digit / 6553.6);
 	}
 	%cl.chatMessage("\c6Your IDC is \c4"@%realIDC@"\c6.");
+}
+
+function servercmdWhatsMyPlanet(%cl)
+{
+	%gateObj = $Stargate[%cl.bl_id];
+	%worldName = %gateObj.worldName $= "" || %gateObj.worldName $= null ? "a Hidden System" : %gateObj.worldName;
+	%address = %gateObj.address;
+	%poo = %gateObj.pointOfOrigin;
+	%cl.chatMessage("\c6You are on \c3"@%worldName@"\c6, with the address \c4"@%address@"\c6 and the point of origin glyph \c1"@%poo@"\c6.");
 }
 
 exec("./Bricks/_Init.cs");
