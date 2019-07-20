@@ -96,7 +96,7 @@ function MakeStargate(%trans, %address, %origin, %name)
 	{
 		%offset = vectorAdd(vectorScale(%right, mSin(%i*$PI/4.5)*-4.2),
 			vectorScale(%up, mCos(%i*$PI/4.5)*4.2));
-		%trans = vectorAdd(%pos, %offset) SPC mEulerToAxis(%vAng SPC -360*(%i/9)+%rot SPC -%hAng);
+		%trans = vectorAdd(%pos, %offset) SPC eulerToAxis(%vAng SPC -360*(%i/9)+%rot SPC -%hAng);
 		
 		(%shape = new StaticShape() {
 			datablock = StargateChevronBottomShape;
@@ -380,7 +380,7 @@ function StaticShape::DiallingSequence(%obj, %address, %origAddr, %last, %spinSt
 		%vAng = mAtan(getWord(%for, 2), %hLen) * (180 / $PI);
 		%hAng = mAtan(getWord(%for, 0), getWord(%for, 1)) * (180 / $PI);
 		if(mAbs(vectorDot(%obj.getUpVector(), "0 0 1")) > 0.999) %hAng *= -1;
-		%spinObj.setTransform(%obj.getPosition() SPC mEulerToAxis(%vAng SPC -%rot SPC %hAng));
+		%spinObj.setTransform(%obj.getPosition() SPC eulerToAxis(%vAng SPC -%rot SPC %hAng));
 		
 		%obj.DialSched = %obj.schedule(1520, "DiallingSequence", restWords(%address), %origAddr, -1, -1, 0, 0, !%spinDir);
 		%obj.ChevronLockAnim(0, %words == 1);
@@ -488,7 +488,7 @@ function StaticShape::DiallingSequence(%obj, %address, %origAddr, %last, %spinSt
 	%vAng = mAtan(getWord(%for, 2), %hLen) * (180 / $PI);
 	%hAng = mAtan(getWord(%for, 0), getWord(%for, 1)) * (180 / $PI);
 	if(mAbs(vectorDot(%obj.getUpVector(), "0 0 1")) > 0.999) %hAng *= -1;
-	%spinObj.setTransform(%obj.getPosition() SPC mEulerToAxis(%vAng SPC -%obj.currSpin SPC %hAng));
+	%spinObj.setTransform(%obj.getPosition() SPC eulerToAxis(%vAng SPC -%obj.currSpin SPC %hAng));
 	
 	%obj.DialSched = %obj.schedule(16, "DiallingSequence", %address, %origAddr, %now, %spinStart, %accelMode, %angVel, %spinDir);
 }
@@ -747,18 +747,23 @@ function StaticShape::StargateWormhole(%this, %dest, %last)
 					else
 					{
 						%vel = %this.SGLastVel[%obj];
-						%rPos = vectorDot(%hit, %right);
-						%uPos = vectorDot(%hit, %up);
-						%destHit = vectorAdd(vectorAdd(vectorScale(%destRight, %rPos),
-							vectorScale(%destUp, %uPos)), %dest);
-						
-						%objHit = vectorAdd(%this.getPosition(), vectorAdd(
-							vectorScale(%right, %rPos), vectorScale(%up, %uPos)));
+                        %rPos = vectorDot(%hit, %right);
+                        %uPos = vectorDot(%hit, %up);
+                        //%destHit = vectorAdd(vectorAdd(vectorScale(%destRight, %rPos), vectorScale(%destUp, %uPos)), %dest);
+                        %destRight = vectorCross(%destFor, %destUp);
+                        %destHit = vectorAdd(%destPos, vectorAdd(vectorAdd(
+                            vectorScale(%destFor, -getWord(%rDir, 0)),
+                            vectorScale(%destRight, -getWord(%rDir, 1))),
+                            vectorScale(%destUp, getWord(%rDir, 2))));
+
+                        %objHit = vectorAdd(%this.getPosition(), vectorAdd(
+                            vectorScale(%right, %rPos), vectorScale(%up, %uPos)));
+
 						serverPlay3D(ObjectEntrance_Sound, %objHit);
-						
-						%mask = $Typemasks::fxBrickAlwaysObjectType;
-						%ray = containerRaycast(%destHit, vectorAdd(%destHit, vectorScale(%destFor, 0.8)), %mask);
-						if(isObject(%ray) && %ray.isColliding())
+
+                        %mask = $Typemasks::fxBrickAlwaysObjectType;
+                        %ray = containerRaycast(%destHit, vectorAdd(%destHit, vectorScale(%destFor, 0.8)), %mask);
+                        if(isObject(%ray) && %ray.isColliding())
 						{
 							if(%type & %playerMask)
 							{
@@ -862,6 +867,7 @@ function StaticShape::StargateWormhole(%this, %dest, %last)
 									%passenger = %obj.getMountedObject(%i);
 									if(isObject(%cl = %passenger.client))
 									{
+										$Stargate[%cl.bl_id] = %obj.linkedGate;
 										$StargatePos[%cl.bl_id] = %destPos;
 										%destAng = mAtan(getWords(%destFor, 0), getWords(%destFor, 1));
 										$StargateSpawn[%cl.bl_id] = vectorAdd(%destPos, vectorScale(%destFor, 4))@" 0 0 1 "@%destAng;
@@ -879,6 +885,7 @@ function StaticShape::StargateWormhole(%this, %dest, %last)
 							
 							if(isObject(%cl = %obj.client))
 							{
+								$Stargate[%cl.bl_id] = %obj.linkedGate;
 								$StargatePos[%cl.bl_id] = %destPos;
 								%destAng = mAtan(getWords(%destFor, 0), getWords(%destFor, 1));
 								$StargateSpawn[%cl.bl_id] = vectorAdd(%destPos, vectorScale(%destFor, 4))@" 0 0 1 "@%destAng;
@@ -1082,7 +1089,7 @@ function StaticShape::UpdateStargateTrans(%obj, %trans)
 	{
 		%offset = vectorAdd(vectorScale(%right, mSin(%i*$PI/4.5)*-%radius),
 			vectorScale(%up, mCos(%i*$PI/4.5)*%radius));
-		%trans = vectorAdd(%pos, %offset) SPC mEulerToAxis(%vAng SPC -360*(%i/9)+%rot SPC -%hAng);
+		%trans = vectorAdd(%pos, %offset) SPC eulerToAxis(%vAng SPC -360*(%i/9)+%rot SPC -%hAng);
 		
 		%obj.ChevB[%i].setTransform(%trans);
 		%obj.ChevF[%i].setTransform(%trans);
@@ -1121,7 +1128,7 @@ function StaticShape::UpdateStargateScale(%obj, %scalar)
 	{
 		%offset = vectorAdd(vectorScale(%right, mSin(%i*$PI/4.5)*-%radius),
 			vectorScale(%up, mCos(%i*$PI/4.5)*%radius));
-		%trans = vectorAdd(%pos, %offset) SPC mEulerToAxis(%vAng SPC -360*(%i/9)+%rot SPC -%hAng);
+		%trans = vectorAdd(%pos, %offset) SPC eulerToAxis(%vAng SPC -360*(%i/9)+%rot SPC -%hAng);
 		
 		%obj.ChevB[%i].setScale(%scale);
 		%obj.ChevF[%i].setScale(%scale);
@@ -1173,7 +1180,7 @@ function MakeGates()
 	if(!$MadeGates)
 	{
 		$MadeGates = 1;
-		%earthGate = MakeStargate("0 0.25 5.3 "@mEulerToAxis("0 0 0"), "28 26 5 36 11 29", 1, "Earth");
+		%earthGate = MakeStargate("0 0.25 5.3 "@eulerToAxis("0 0 0"), "28 26 5 36 11 29", 1, "Earth");
 		
 		%address[-1+%address++] = "27-7-15-32-12-30 1 Abydos";   //Canonical point of origin
 		%address[-1+%address++] = "20-18-11-38-10-32 31 Apophis's_Base";
@@ -1214,6 +1221,7 @@ function MakeGates()
 		while(%address < 816)
 		{
 			%randAddr = "";
+			%symbol = 0;
 			for(%i=0;%i<6;%i++)
 			{
 				%symbol = mFloor(rand(%id, 2, 40));
@@ -1230,9 +1238,9 @@ function MakeGates()
 							%flag = 1;
 						}
 				}
-				%randAddr = trim(%randAddr SPC %symbol);
 			}
 			%randAddr = strReplace(%randAddr, " ", "-");
+			%randAddr = trim(%randAddr SPC %symbol);
 			for(%i=0;%i<%address;%i++)
 				if(firstWord(%address[%i]) $= firstWord(%randAddr))
 					continue;
@@ -1273,10 +1281,10 @@ function MakeGates()
 				
 				%gate = MakeStargate(vectorAdd(%eVal SPC %nVal SPC 4.7,
 					vectorScale(-mSin(%ang/180*$PI) SPC mCos(%ang/180*$PI), -0.25))
-					SPC mEulerToAxis("0 0 "@%ang), %gateAddr, %origin, %gateName);
+					SPC eulerToAxis("0 0 "@%ang), %gateAddr, %origin, %gateName);
 				%dhd = MakeDHD(%gate, vectorAdd(%eVal SPC %nVal SPC 1.2,
 					vectorScale(-mSin(%ang/180*$PI) SPC mCos(%ang/180*$PI), 20))
-					SPC mEulerToAxis("0 0 "@%ang));
+					SPC eulerToAxis("0 0 "@%ang));
 				switch(%addrID)
 				{
 					case 0:
@@ -1292,7 +1300,7 @@ function MakeGates()
 		%earthGate.sunAzim = 0;
 		%earthGate.sunElev = 30;
 		%earthGate.autodialOnShutdown = 1;
-		%earthGate.spawnMalpBotOnLock = 0;   //Temporary
+		%earthGate.spawnMalpBotOnLock = 1;   //Temporary
 		%earthGate.dontCloseOnObjectEnter = 0;
 		%earthGate.dontCloseOnBotEnter = 1;
 		schedule(15000, 0, "StargateAutodial", %earthGate, 90);
@@ -1317,7 +1325,7 @@ function StargateAutodial(%gate, %openTime)
 	{
 		%gate.maxOpenTime = %openTime;
 		%dialGate = %list[getRandom(0, %list - 1)];
-		//MessageAllInRange(%gate.getPosition(), "\c2"@trim(%gate.worldName SPC "Autodialler")@"\c6: Dialling to "@%dialGate.worldName@".");
+		MessageAllInRange(%gate.getPosition(), "\c2"@trim(%gate.worldName SPC "Autodialler")@"\c6: Dialling to "@%dialGate.worldName@".");
 		%gate.DialStargate(%dialGate.address SPC %gate.pointOfOrigin);
 		for(%i=0;%i<3;%i++) %gate.lastAutodial[%i + 1] = %gate.lastAutodial[%i];
 		%gate.lastAutodial0 = %dialGate;
