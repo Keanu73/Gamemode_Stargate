@@ -1,0 +1,10 @@
+Dial.dts
+ - DialBottom - bottom cylinder, middle of ring
+ - Ring - the torus around the dial
+ - Dials - the body of the two symbol rings
+
+ - Symbol buttons:
+ - Sym_A_0 ... Sym_A_18
+ - Sym_B_0 ... Sym_B_18
+
+ - Button - the sphere in the center

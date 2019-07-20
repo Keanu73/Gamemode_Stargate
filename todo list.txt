@@ -1,0 +1,3 @@
+Add execution reference to the Stunt Plane (temporary, for UAV)
+Make people unable to build on the Stargate and DHD
+Add Stargate Controller for automanual dialling (and gate redirects)
