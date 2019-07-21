@@ -1221,7 +1221,6 @@ function MakeGates()
 		while(%address < 816)
 		{
 			%randAddr = "";
-			%symbol = 0;
 			for(%i=0;%i<6;%i++)
 			{
 				%symbol = mFloor(rand(%id, 2, 40));
@@ -1238,9 +1237,9 @@ function MakeGates()
 							%flag = 1;
 						}
 				}
+				%randAddr = trim(%randAddr SPC %symbol);
 			}
 			%randAddr = strReplace(%randAddr, " ", "-");
-			%randAddr = trim(%randAddr SPC %symbol);
 			for(%i=0;%i<%address;%i++)
 				if(firstWord(%address[%i]) $= firstWord(%randAddr))
 					continue;
