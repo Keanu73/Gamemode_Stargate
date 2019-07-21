@@ -1,4 +1,15 @@
+function createRandContext(%seed)
+{
+	setRandomSeed(%seed);
+}
+
+function rand(%id, %min, %max)
+{
+	return getRandom(%min, %max);
+}
+
 //Black magic created by Port.
+return; //rand seems to have a pattern of some sort 
 
 function createRandContext(%seed)
 {
