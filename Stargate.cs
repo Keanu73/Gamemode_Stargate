@@ -1237,9 +1237,8 @@ function MakeGates()
 							%flag = 1;
 						}
 				}
-				%randAddr = trim(%randAddr SPC %symbol);
+				%randAddr = trim(%randAddr @ "-" @ %symbol);
 			}
-			%randAddr = strReplace(%randAddr, " ", "-");
 			for(%i=0;%i<%address;%i++)
 				if(firstWord(%address[%i]) $= firstWord(%randAddr))
 					continue;
