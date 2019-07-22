@@ -750,11 +750,12 @@ function StaticShape::StargateWormhole(%this, %dest, %last)
                         %rPos = vectorDot(%hit, %right);
                         %uPos = vectorDot(%hit, %up);
                         //%destHit = vectorAdd(vectorAdd(vectorScale(%destRight, %rPos), vectorScale(%destUp, %uPos)), %dest);
+
                         %destRight = vectorCross(%destFor, %destUp);
-                        %destHit = vectorAdd(%destPos, vectorAdd(vectorAdd(
-                            vectorScale(%destFor, -getWord(%rDir, 0)),
-                            vectorScale(%destRight, -getWord(%rDir, 1))),
-                            vectorScale(%destUp, getWord(%rDir, 2))));
+                        %destHit = vectorAdd(%destPos, vectorAdd(vectorAdd(vectorScale(%destFor, -getWord(%rDir, 0)), vectorScale(%destRight, -getWord(%rDir, 1))), vectorScale(%destUp, getWord(%rDir, 2))));
+
+                        %index = mAbs(getWord(%destFor, 0)) < mAbs(getWord(%destFor, 1));
+                        %destHit = setWord(%destHit, %index, getWord(%destPos, %index));
 
                         %objHit = vectorAdd(%this.getPosition(), vectorAdd(
                             vectorScale(%right, %rPos), vectorScale(%up, %uPos)));
