@@ -1237,12 +1237,19 @@ function MakeGates()
 							%flag = 1;
 						}
 				}
-				%randAddr = trim(%randAddr @ "-" @ %symbol);
+				if(strstr(%randAddr, %symbol) != -1)
+				{
+					%symbol = mCeil(rand(%id, 2, 40));
+				}
+				%randAddr = trim(trim(%randAddr) @ "-" @ trim(%symbol));
 			}
+			%randAddr = trim(%randAddr);
+			%duplicate = 0;
 			for(%i=0;%i<%address;%i++)
 				if(firstWord(%address[%i]) $= firstWord(%randAddr))
-					continue;
-			%address[-1+%address++] = %randAddr;
+					%duplicate = 1;
+			if(%duplicate == 0)
+				%address[-1+%address++] = %randAddr;
 		}
 		
 		for(%y=0;%y<33;%y++)
@@ -1256,7 +1263,7 @@ function MakeGates()
 				
 				%addrID = mFloor(rand(%id, 0, %address));
 				if(%addrID >= %address) %addrID = %address - 1;
-				%gateAddr = strReplace(getWord(%addr = %address[%addrID], 0), "-", " ");
+				%gateAddr = ltrim(strReplace(getWord(%addr = %address[%addrID], 0), "-", " "));
 				if(getWord(%addr, 1) !$= "")
 				{
 					%origin = getWord(%addr, 1);
