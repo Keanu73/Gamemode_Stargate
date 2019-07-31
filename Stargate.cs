@@ -1241,14 +1241,14 @@ function MakeGates()
 				%randAddr = trim(%randAddr SPC %symbol);
 			}
 			%randAddr = strReplace(%randAddr, " ", "-");
-			/*%duplicate = 0;
-			for(%i=0;%i<%address;%i++) {
-				if(firstWord(%address[%i]) $= firstWord(%randAddr)) {
-					%duplicate = 1;
-				}
-			}
-			if(%dupliate == 1)
-				continue;*/
+			//%duplicate = 0;
+			//for(%i=0;%i<%address;%i++) {
+			//	if(firstWord(%address[%i]) $= firstWord(%randAddr)) {
+			//		%duplicate = 1;
+			//	}
+			//}
+			//if(%dupliate == 1)
+			//	continue;
 			%address[-1+%address++] = %randAddr;
 		}
 		
