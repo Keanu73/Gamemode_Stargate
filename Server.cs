@@ -192,17 +192,6 @@ function servercmdWhatsMyIDC(%cl)
 	%cl.chatMessage("\c6Your IDC is \c4"@%realIDC@"\c6.");
 }
 
-function servercmdWhatsMyPlanet(%cl)
-{
-	%gateObj = $Stargate[%cl.bl_id];
-	if (%gateObj $= null || %gateObj $= "")
-		return %cl.chatMessage("Your planet has not been located. Please travel to a different one to access the Planetary Index.");
-	%worldName = %gateObj.worldName $= "" || %gateObj.worldName $= null ? "a Hidden System" : %gateObj.worldName;
-	%address = %gateObj.address;
-	%poo = %gateObj.pointOfOrigin;
-	%cl.chatMessage("\c6You are on \c3"@%worldName@"\c6, with the address \c4"@%address@"\c6 and the point of origin as glyph \c1"@%poo@"\c6.");
-}
-
 exec("./Bricks/_Init.cs");
 exec("./Libraries/_Init.cs");
 exec("./Sounds/_Init.cs");
@@ -210,6 +199,7 @@ exec("./BotMALP.cs");
 exec("./DHD.cs");
 exec("./Environ.cs");
 exec("./Events.cs");
+exec("./Functions.cs");
 exec("./MALP_AI.cs");
 exec("./Painting.cs");
 exec("./Stargate.cs");
